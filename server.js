@@ -1,25 +1,19 @@
 var express = require('express');
+var bodyParser = require('body-parser');
 var app = express();
 var PORT = process.env.PORT || 3000;
 var middleware = require('./middleware');
-var todos = [{
-	id: 1,
-	description: 'Go to school',
-	completed: false
-}, {
-	id: 2, 
-	description: 'learn nodejs',
-	completed: false
-}, {
-	id: 3,
-	description: 'breakfast',
-	completed: true
-}];
+var todos = [];
+var todoNextId = 1; //increment unique id
 
+app.use(bodyParser.json());
+
+// GET /todos
 app.get('/todos', function(req, res) {
 	res.json(todos);
 });
 
+// GET /todos/:id
 app.get('/todos/:id', function(req, res) {
 	var todoId = parseInt(req.params.id, 10);
 	var matchedTodo;
@@ -36,6 +30,19 @@ app.get('/todos/:id', function(req, res) {
 		res.status(404).send();
 	}
 
+});
+
+// POST /todos
+app.post('/todos', function (req, res) {
+	var body = req.body;
+
+	body.id = todoNextId++;
+	// console.log(body);
+	todos.push(body);
+
+	// console.log('description: ' + body.description);
+	res.json(body);
+	// res.json(todos);
 });
 
 app.use(middleware.logger);
