@@ -84,19 +84,15 @@ app.put('/todos/:id', function(req, res) {
 		validAttributes.completed = body.completed;
 	} else if (body.hasOwnProperty('completed')) {
 		return res.status(400).send();
-	} else {
-		return res.status(401).json({"error": "Never provided attribute, no problem"});
 	}
 
-	if (body.hasOwnProperty('description') && _.isString(body.description) && body.description.trim().length === 0) {
+	if (body.hasOwnProperty('description') && _.isString(body.description) && body.description.trim().length > 0) {
 		validAttributes.description = body.description;
 
 		// Reference, remove bounce of space poor finger
 		validAttributes.description = validAttributes.description.trim();
 	} else if (body.hasOwnProperty('description')) {
 		return res.status(400).send();
-	} else {
-		return res.status(401).json({"error": "Never provided attribute, no problem"});
 	}
 
 	//update todo use extend method
