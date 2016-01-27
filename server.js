@@ -1,11 +1,13 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var _ = require('underscore');
+var db = require('./db');
 var app = express();
 var PORT = process.env.PORT || 3000;
 var middleware = require('./middleware');
 var todos = [];
 var todoNextId = 1; //increment unique id
+
 
 app.use(bodyParser.json());
 
@@ -50,21 +52,43 @@ app.post('/todos', function (req, res) {
 	var body = _.pick(req.body, 'description', 'completed');
 
 	// Check validate data types
-	if (!_.isString(body.description) || !_.isBoolean(body.completed) || body.description.trim().length ===0) {
+	if (!_.isString(body.description) || !_.isBoolean(body.completed) || body.description.trim().length === 0) {
 		return res.status(400).send();
 	};
 
 	// Reference, remove bounce of space poor finger
 	body.description = body.description.trim();
 
-	// set increment unique id
-	body.id = todoNextId++;
+	db.todo.create({
+		description: body.description,
+		completed: body.completed
+	})
+		.then(function (todo) {
+			res.json(todo);
+		}, 
+			function (e) {
+				res.status(400).json(e);
+			})
+				.catch(function (e) {
+					res.send(e);
+				});
 
-	// Push body to todos array
-	todos.push(body);
+	// // Check validate data types
+	// if (!_.isString(body.description) || !_.isBoolean(body.completed) || body.description.trim().length ===0) {
+	// 	return res.status(400).send();
+	// };
 
-	// send back response to user
-	res.json(body);
+	// // Reference, remove bounce of space poor finger
+	// body.description = body.description.trim();
+
+	// // set increment unique id
+	// body.id = todoNextId++;
+
+	// // Push body to todos array
+	// todos.push(body);
+
+	// // send back response to user
+	// res.json(body);
 
 });
 
@@ -124,9 +148,11 @@ app.get('/about', middleware.requireAuthentication, function (req, res) {
 
 app.use(express.static(__dirname + '/public'));
 
-app.listen(PORT, function (error) {
-	if (error) {
-		throw error
-	};
-	console.log('Server running on port ' + PORT + '!');
+db.sequelize.sync().then(function () {
+	app.listen(PORT, function (error) {
+		if (error) {
+			throw error
+		};
+		console.log('Server running on port ' + PORT + '!');
+	});
 });
