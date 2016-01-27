@@ -1,3 +1,5 @@
+'use strict';
+
 var express = require('express');
 var bodyParser = require('body-parser');
 var _ = require('underscore');
@@ -35,14 +37,21 @@ app.get('/todos', function(req, res) {
 // GET /todos/:id
 app.get('/todos/:id', function(req, res) {
 	var todoId = parseInt(req.params.id, 10);
-	// Refactor use underscore
-	var matchedTodo = _.findWhere(todos, {id: todoId});
 
-	if(matchedTodo) {
-		res.json(matchedTodo);
-	} else {
-		res.status(404).send();
-	}
+	db.todo.findById(todoId)
+		.then(function (todo) {
+			if (todo) {
+				res.json(todo);
+			} else {
+				res.status(404).send();
+			}
+		},
+			function (e) {
+				res.status(500).send(e);
+			})
+				.catch(function (e) {
+					res.send(e);
+				});
 
 });
 
@@ -72,23 +81,6 @@ app.post('/todos', function (req, res) {
 				.catch(function (e) {
 					res.send(e);
 				});
-
-	// // Check validate data types
-	// if (!_.isString(body.description) || !_.isBoolean(body.completed) || body.description.trim().length ===0) {
-	// 	return res.status(400).send();
-	// };
-
-	// // Reference, remove bounce of space poor finger
-	// body.description = body.description.trim();
-
-	// // set increment unique id
-	// body.id = todoNextId++;
-
-	// // Push body to todos array
-	// todos.push(body);
-
-	// // send back response to user
-	// res.json(body);
 
 });
 
