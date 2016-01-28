@@ -1,10 +1,19 @@
 'use strict';
 
 var Sequelize = require('sequelize'),
-	sequelize = new Sequelize('undefined', 'undefined', 'undefined', {
-		'dialect': 'sqlite',
-		'storage': __dirname + '/data/todo-api-database.sqlite'
-	});
+	env = process.env.NODE_ENV || 'development',
+	sequelize;
+
+	if (env === 'production') {
+		sequelize = new Sequelize(process.env.DATABASE_URL, {
+			'dialect': 'postgres'
+		});
+	} else{
+		sequelize = new Sequelize('undefined', 'undefined', 'undefined', {
+			'dialect': 'sqlite',
+			'storage': __dirname + '/data/todo-api-database.sqlite'
+		});
+	};
 
 var db = {};
 
