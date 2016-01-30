@@ -156,6 +156,19 @@ app.put('/todos/:id', function(req, res) {
 		});
 });
 
+// POST /users
+app.post('/users', function (req, res) {
+	var body = _.pick(req.body, 'email', 'password');
+
+	db.user.create(body)
+		.then(function (user) {
+			res.json(user);
+		},
+		function (e) {
+			res.status(400).json(e);
+		});
+});
+
 app.use(middleware.logger);
 
 app.get('/about', middleware.requireAuthentication, function (req, res) {
