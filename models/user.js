@@ -43,6 +43,37 @@ module.exports = function (sequelize, DataTypes) {
 				};
 			}
 		},
+		classMethods: {
+			authentication: function (body) {
+				var self = this;
+				return new Promise(function (resolve, reject) {
+					if (!_.isString(body.email) || !_.isString(body.password)) {
+						return reject();
+					};
+
+					console.log(self);
+
+					self.findOne({
+						where: {
+							email: body.email
+						}
+					}).then(function(user) {
+						// check if email not exist,
+						// and Load hash from your password DB is not match. then send response status 401
+						// othewise, hanging response if email not exist
+						if (!user || !bcrypt.compareSync(body.password, user.get('password_hash'))) {
+							return reject();
+						};
+
+						// match & success
+						resolve(user);
+					},
+					function (e) {
+						reject();
+					});
+				});
+			}
+		},
 		instanceMethods: {
 			toPublicJSON: function () {
 				var json = this.toJSON();

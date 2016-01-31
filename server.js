@@ -173,30 +173,14 @@ app.post('/users', function (req, res) {
 // POST /users/login
 app.post('/users/login', function (req, res) {
 	var body = _.pick(req.body, 'email', 'password');
-	// var attributes = {};
 
-	if (typeof body.email !== 'string' || typeof body.password !== 'string') {
-		return res.status(400).send();
-	};
-	
-	db.user.findOne({
-		where: {
-			email: body.email
-		}
-	}).then(function(user) {
-		// check if email not exist,
-		// and Load hash from your password DB is not match. then send response status 401
-		// othewise, hanging response if email not exist
-		if (!user || !bcrypt.compareSync(body.password, user.get('password_hash'))) {
-			return res.status(401).send();
-		};
-
-		// match & success
+	db.user.authentication(body).then(function (user) {
 		res.json(user.toPublicJSON());
 	},
 	function (e) {
-		res.status(500).send();
+		res.status(401).send();
 	});
+
 });
 
 
