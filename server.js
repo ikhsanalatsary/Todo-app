@@ -175,7 +175,13 @@ app.post('/users/login', function (req, res) {
 	var body = _.pick(req.body, 'email', 'password');
 
 	db.user.authentication(body).then(function (user) {
-		res.json(user.toPublicJSON());
+		var userToken = user.generateToken('authentication');
+
+		if (userToken) {
+			res.header('Auth', userToken).json(user.toPublicJSON());
+		} else {
+			res.status(401).send();
+		};
 	},
 	function (e) {
 		res.status(401).send();
@@ -192,7 +198,7 @@ app.get('/about', middleware.requireAuthentication, function (req, res) {
 
 app.use(express.static(__dirname + '/public'));
 
-db.sequelize.sync().then(function () {
+db.sequelize.sync({force: true}).then(function () {
 	app.listen(PORT, function (error) {
 		if (error) {
 			throw error
