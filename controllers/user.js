@@ -26,7 +26,11 @@ module.exports = function (app, db) {
 			var userToken = user.generateToken('authentication');
 
 			if (userToken) {
-				res.header('Auth', userToken).json(user.toPublicJSON());
+				// res.header('Auth', userToken).json(user.toPublicJSON());
+				res.header('Auth', userToken).send({
+					token: userToken,
+					user: user.toPublicJSON()
+				});
 			} else {
 				res.status(401).send();
 			};

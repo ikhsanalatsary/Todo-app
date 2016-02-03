@@ -1,0 +1,24 @@
+{
+  "name": "todo-app",
+  "homepage": "https://github.com/ikhsanalatsary/Todo-app",
+  "authors": [
+    "ikhsanalatsary <ikhsan.alatsary@yahoo.com>"
+  ],
+  "description": "Todo Application use expressJs & AngularJs & Sequelize",
+  "main": [
+    "app.js",
+    "index.html"
+  ],
+  "moduleType": [],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "~1.4.9"
+  }
+}
