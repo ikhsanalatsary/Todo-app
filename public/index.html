@@ -5,15 +5,15 @@
 </head>
 <body ng-controller="TodoCtrl as vm">
 	<h1>Hello Express</h1>
-	<div>
+	<div ng-hide="vm.user">
 		<form ng-submit="vm.login(vm.email, vm.password)">
 			<label>Email: <input type="text" ng-model=vm.email> </label>
-			<label>Password: <input type="text" ng-model=vm.password> </label>
+			<label>Password: <input type="password" ng-model=vm.password> </label>
 			<button type="submit">Login</button>
 		</form>
 	</div>
 
-	<div>
+	<div ng-show="vm.user">
 		<h2>Welcome {{vm.user.email}}</h2>
 		<button ng-click="vm.logout()">Logout</button>
 		<button ng-click="vm.getTodos()">Get All Todos</button>

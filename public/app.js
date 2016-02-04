@@ -15,6 +15,11 @@
 		vm.login = login;
 		vm.logout = logout;
 
+		// invocation / Initializations for authorized user. for fix refresh
+		UserFactory.getUser(vm.user).then(function success(res) {
+			vm.user = res.data;
+		});
+
 		function getTodos() {
 			TodosFactory.getTodos().then(function success(res) {
 				vm.todos = res.data;
@@ -24,11 +29,7 @@
 		function login(email, password) {
 			UserFactory.login(email, password)
 				.then(function success(res) {
-					//console.log(res.data);
-					// var authHeader = res.headers('Auth');
 					vm.user = res.data.user;
-					// localStorage.setItem('Auth', authHeader);
-					// alert(res.data.token);
 				}, handleError);
 		}
 
@@ -52,21 +53,15 @@
 
 		function getTodos() {
 			return $http.get(API_URL + '/todos');
-			// return $http({
-			// 	method: 'GET',
-			// 	url: API_URL + '/todos',
-			// 	headers: {
-			// 		'Auth': localStorage.getItem('Auth')
-			// 	}
-			// })
 		}
 	});
 
-	app.factory('UserFactory', function UserFactory($http, API_URL, AuthTokenFactory) {
+	app.factory('UserFactory', function UserFactory($http, API_URL, AuthTokenFactory, $q) {
 		'use strict';
 		return {
 			login: login,
-			logout: logout
+			logout: logout,
+			getUser: getUser
 		};
 
 		function login(email, password) {
@@ -81,6 +76,15 @@
 
 		function logout() {
 			AuthTokenFactory.setToken();
+		}
+
+		function getUser(vmUser) {
+			if (!vmUser || AuthTokenFactory.getToken()) {
+				return $http.get(API_URL + '/me');
+			}
+			else {
+				$q.reject({data: 'No Authorized Token'});
+			};
 		}
 	});
 

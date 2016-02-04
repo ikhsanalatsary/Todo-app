@@ -11,15 +11,13 @@ var middleware = require('./middleware')(db);
 var PORT = process.env.PORT || 3000;
 
 app.use(bodyParser.json());
+// app.use(middleware.logger);
 user(app, db);
 todo(app, middleware, db);
-// app.use('/users', user(app));
-// app.use('/todos', todo(app));
-
-// app.use(middleware.logger);
-
-app.get('/about', middleware.requireAuthentication, function (req, res) {
-	res.send('About Us');
+app.get('/me', middleware.requireAuthentication, function (req, res) {
+	if (req.user) {
+		res.send(req.user);
+	}
 });
 
 app.use(express.static(__dirname + '/public'));
