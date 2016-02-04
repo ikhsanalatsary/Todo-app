@@ -20,8 +20,10 @@
 			UserFactory.login(email, password)
 				.then(function success(res) {
 					//console.log(res.data);
+					var authHeader = res.headers('Auth')
 					vm.user = res.data.user;
-					alert(res.data.token);
+					localStorage.setItem('Auth', authHeader);
+					// alert(res.data.token);
 				}, handleError);
 		}
 
@@ -42,7 +44,7 @@
 				method: 'GET',
 				url: API_URL + '/todos',
 				headers: {
-					'Auth': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbiI6IlUyRnNkR1ZrWDErd0laNCtYV3N1K1dmWGd6M1VzN3cxVFlJdDVsZktGZFoyNVdHVGZWZEVSRnhra3B5VHBBMGtTSzFkb2VuZVB1emtmd2F0cHQ0RndnPT0iLCJpYXQiOjE0NTQ1MTM1MzB9.dys3RXfy-zh45toyU-orhsWPrmoFQlZ-i3QTUE6BEIk'
+					'Auth': localStorage.getItem('Auth')
 				}
 			})
 		}
