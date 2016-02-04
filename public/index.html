@@ -15,6 +15,7 @@
 
 	<div>
 		<h2>Welcome {{vm.user.email}}</h2>
+		<button ng-click="vm.logout()">Logout</button>
 		<button ng-click="vm.getTodos()">Get All Todos</button>
 		<pre ng-bind="vm.todos | json"></pre>
 	</div>
