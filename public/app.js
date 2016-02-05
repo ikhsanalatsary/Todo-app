@@ -8,12 +8,14 @@
 
 	app.constant('API_URL', 'http://localhost:3000');
 
-	app.controller('TodoCtrl', function TodoCtrl(TodosFactory, UserFactory) {
+	app.controller('TodoCtrl', function TodoCtrl(TodosFactory, UserFactory, $location) {
 		'use strict';
 		var vm = this;
 		vm.getTodos = getTodos;
 		vm.login = login;
 		vm.logout = logout;
+		vm.register = register;
+		vm.checkSomething = checkSomething;
 
 		// invocation / Initializations for authorized user. for fix refresh
 		UserFactory.getUser(vm.user).then(function success(res) {
@@ -38,10 +40,28 @@
 			vm.email = '';
 			vm.password = '';
 			vm.user = '';
+			vm.registered = null;
+		}
+
+		function register (email, password) {
+			UserFactory.register(email, password)
+				.then(function success(res) {
+					console.log(res.data);
+					vm.registered = res.data;
+					alert('Registered, you can login');
+				}, function (res) {
+					alert('Error ' + res.status + ' status ' + res.data.errors[0].message );
+				});
+		}
+
+		function checkSomething() {
+			if(vm.registered || vm.user) {
+				return true;
+			}
 		}
 
 		function handleError(res) {
-			alert('Error ' + res.status);
+			alert('Error ' + res.status + ' status ' + res.statusText);
 		}
 	});
 
@@ -61,7 +81,8 @@
 		return {
 			login: login,
 			logout: logout,
-			getUser: getUser
+			getUser: getUser,
+			register: register
 		};
 
 		function login(email, password) {
@@ -86,6 +107,16 @@
 				$q.reject({data: 'No Authorized Token'});
 			};
 		}
+
+		function register(email, password) {
+			if (typeof email === 'string' && typeof password === 'string') {
+				return $http.post(API_URL + '/users', {
+					email: email,
+					password: password
+				});
+			}
+		}
+
 	});
 
 	app.factory('AuthTokenFactory', function AuthTokenFactory($window) {
@@ -118,7 +149,6 @@
 
 		function addToken(config) {
 			var token = AuthTokenFactory.getToken();
-
 			if (token) {
 				config.headers = config.headers || {};
 				config.headers.Auth = token;
