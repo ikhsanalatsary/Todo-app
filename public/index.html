@@ -17,8 +17,8 @@
 
 	<hr>
 
-	<h2>Login</h2>
 	<div ng-hide="vm.user">
+		<h2>Login</h2>
 		<form ng-submit="vm.login(vm.email, vm.password)">
 			<label>Email: <input type="text" ng-model=vm.email> </label>
 			<label>Password: <input type="password" ng-model=vm.password> </label>
@@ -28,6 +28,11 @@
 
 	<div ng-show="vm.user">
 		<h2>Welcome {{vm.user.email}}</h2>
+		<form ng-submit="vm.addTodo(vm.description)">
+			<input type="text" placeholder="What's up?" ng-model="vm.description" ng-disabled="vm.saving" autofocus>
+			<!-- <button type="submit">Save</button> -->
+			<pre ng-bind="vm.description"></pre>
+		</form>
 		<button ng-click="vm.logout()">Logout</button>
 		<button ng-click="vm.getTodos()">Get All Todos</button>
 		<pre ng-bind="vm.todos | json"></pre>

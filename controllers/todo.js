@@ -60,28 +60,13 @@ module.exports = function(app, middleware, db) {
 		// Strict only allow for expected key
 		var body = _.pick(req.body, 'description', 'completed');
 
-		// Check validate data types
-		if (!_.isString(body.description) || !_.isBoolean(body.completed) || body.description.trim().length === 0) {
-			return res.status(400).send();
-		};
-
-		// Reference, remove bounce of space poor finger
-		body.description = body.description.trim();
-
-		db.todo.create({
-			description: body.description,
-			completed: body.completed
-		})
+		db.todo.create(body)
 			.then(function (todo) {
 				res.json(todo);
 			}, 
-				function (e) {
-					res.status(400).json(e);
-				})
-					.catch(function (e) {
-						res.send(e);
-					});
-
+			function (e) {
+				res.status(400).send();
+			});
 	});
 
 	// DELETE /todos/:id

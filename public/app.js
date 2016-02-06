@@ -8,7 +8,7 @@
 
 	app.constant('API_URL', 'http://localhost:3000');
 
-	app.controller('TodoCtrl', function TodoCtrl(TodosFactory, UserFactory, $location) {
+	app.controller('TodoCtrl', function TodoCtrl(TodosFactory, UserFactory) {
 		'use strict';
 		var vm = this;
 		vm.getTodos = getTodos;
@@ -16,6 +16,8 @@
 		vm.logout = logout;
 		vm.register = register;
 		vm.checkSomething = checkSomething;
+		vm.addTodo = addTodo;
+		vm.Tada = tada;
 
 		// invocation / Initializations for authorized user. for fix refresh
 		UserFactory.getUser(vm.user).then(function success(res) {
@@ -46,7 +48,6 @@
 		function register (email, password) {
 			UserFactory.register(email, password)
 				.then(function success(res) {
-					console.log(res.data);
 					vm.registered = res.data;
 					alert('Registered, you can login');
 				}, function (res) {
@@ -60,6 +61,28 @@
 			}
 		}
 
+		function addTodo(description) {
+			if (!description) {
+				return;
+			};
+
+			vm.saving = true;
+
+			TodosFactory.insert(description)
+				.then(function success(res) {
+					vm.description = '';
+				}, function() {
+					alert('Error ' + res.status + ' status ' + res.data.errors[0].message );
+				})
+				.finally(function() {
+					vm.saving = false; //set false, for fix hanging in browser
+				});
+		}
+
+		function tada(cb) {
+			alert(cb);
+		}
+
 		function handleError(res) {
 			alert('Error ' + res.status + ' status ' + res.statusText);
 		}
@@ -68,11 +91,18 @@
 	app.factory('TodosFactory', function TodosFactory($http, API_URL) {
 		'use strict';
 		return {
-			getTodos: getTodos
+			getTodos: getTodos,
+			insert: insert
 		};
 
 		function getTodos() {
 			return $http.get(API_URL + '/todos');
+		}
+
+		function insert(description) {
+			return $http.post(API_URL + '/todos', {
+				description: description
+			});
 		}
 	});
 
