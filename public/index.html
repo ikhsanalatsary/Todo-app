@@ -2,6 +2,10 @@
 <html ng-app= "todoApp">
 <head>
 	<title>Todo App</title>
+	<!-- bower:css -->
+	<!-- endcss -->
+	<!-- inject:css -->
+	<!-- endcss -->
 </head>
 <body ng-controller="TodoCtrl as vm">
 	<h1>Hello Express</h1>
@@ -37,8 +41,12 @@
 		<button ng-click="vm.getTodos()">Get All Todos</button>
 		<pre ng-bind="vm.todos | json"></pre>
 	</div>
-
-	<script src="bower_components/angular/angular.min.js"></script>
+	
+	<!-- bower:js -->
+	<script src="bower_components/angular/angular.js"></script>
+	<!-- endinject-->
+	<!-- inject:js -->
 	<script src="app.js"></script>
+	<!-- endinject -->
 </body>
 </html>
