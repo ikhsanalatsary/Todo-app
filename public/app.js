@@ -1,4 +1,4 @@
-(function() {
+;(function() {
 	'use strict';
 	var app = angular.module('todoApp', []);
 
@@ -9,7 +9,7 @@
 	app.constant('API_URL', 'http://localhost:3000');
 
 	app.controller('TodoCtrl', function TodoCtrl(TodosFactory, UserFactory) {
-		'use strict';
+
 		var vm = this;
 		vm.getTodos = getTodos;
 		vm.login = login;
@@ -64,7 +64,7 @@
 		function addTodo(description) {
 			if (!description) {
 				return;
-			};
+			}
 
 			vm.saving = true;
 
@@ -86,10 +86,11 @@
 		function handleError(res) {
 			alert('Error ' + res.status + ' status ' + res.statusText);
 		}
+
 	});
 
 	app.factory('TodosFactory', function TodosFactory($http, API_URL) {
-		'use strict';
+
 		return {
 			getTodos: getTodos,
 			insert: insert
@@ -104,10 +105,11 @@
 				description: description
 			});
 		}
+
 	});
 
 	app.factory('UserFactory', function UserFactory($http, API_URL, AuthTokenFactory, $q) {
-		'use strict';
+
 		return {
 			login: login,
 			logout: logout,
@@ -135,7 +137,7 @@
 			}
 			else {
 				$q.reject({data: 'No Authorized Token'});
-			};
+			}
 		}
 
 		function register(email, password) {
@@ -150,7 +152,7 @@
 	});
 
 	app.factory('AuthTokenFactory', function AuthTokenFactory($window) {
-		'use strict';
+
 		var store = $window.localStorage;
 		var key = 'Auth';
 		return {
@@ -167,12 +169,13 @@
 				store.setItem(key, token);
 			} else {
 				store.removeItem(key);
-			};
+			}
 		}
+
 	});
 
 	app.factory('AuthInterceptor', function AuthInterceptor(AuthTokenFactory) {
-		'use strict';
+
 		return {
 			request: addToken
 		};
@@ -182,9 +185,10 @@
 			if (token) {
 				config.headers = config.headers || {};
 				config.headers.Auth = token;
-			};
+			}
 
 			return config;
 		}
-	})
+	});
+
 })();

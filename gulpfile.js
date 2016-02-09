@@ -1,3 +1,5 @@
+'use strict';
+
 var gulp = require('gulp'),
 	concat = require('gulp-concat'),
 	uglify = require('gulp-uglify'),
@@ -9,7 +11,8 @@ var gulp = require('gulp'),
 	bowerFiles = require('main-bower-files'),
 	es = require('event-stream'),
 	nodemon = require('gulp-nodemon'),
-	notify = require('gulp-notify');
+	notify = require('gulp-notify'),
+	jshint = require('gulp-jshint');
 
 function handleError(error) {
 	console.error.bind(error);
@@ -22,15 +25,15 @@ gulp.task('script', function() {
 		.pipe(concat('main.js'))
 		.pipe(rename({suffix: '.min'}))
         .pipe(uglify())
-        .pipe(gulp.dest('build/js'))
+        .pipe(gulp.dest('build/js'));
 });
 
 gulp.task('styles', function() {
 	return sass('public/sass/**/*.scss', {style: 'compressed'})
 		.on('error', handleError) //handle error function
 		.pipe(rename({suffix: '.min'}))
-		.pipe(gulp.dest('build/css/'))
-})
+		.pipe(gulp.dest('build/css/'));
+});
 
 
 //Watch
@@ -45,8 +48,7 @@ gulp.task('watch', function () {
 gulp.task('index', function() {
 	var target = './public/index.html'
 		jsrc = ['./public/**/*.js', '!./public/bower_components/**/*'],
-		bowersrc = bowerFiles(),
-		cssrc = gulp.src('./public/css/**/*.css', {read: false});
+		bowersrc = bowerFiles();
 
 	gulp.src(target)
 		.pipe(inject(gulp.src(jsrc, {read:false}), {ignorePath: 'public/', addRootSlash: false}))
@@ -56,7 +58,14 @@ gulp.task('index', function() {
 
 });
 
+gulp.task('lint', function () {
+  gulp.src(['./public/**/*.js', '!./node_modules/**/*','!./public/bower_components/**/*'])
+    .pipe(jshint())
+    .pipe(jshint.reporter('default', { verbose: true }))
+});
+
 gulp.task('serve', function () {
+	livereload.listen();
   	nodemon({
     	script: 'server.js'
   		, ext: 'js html'
@@ -65,7 +74,7 @@ gulp.task('serve', function () {
  		gulp.src('server.js')
  			.pipe(livereload())
  			.pipe(notify('Reload Page...'))
- 	})
-})
+ 	});
+});
 
-gulp.task('default', ['index', 'watch']);
+gulp.task('default', ['index', 'serve']);
