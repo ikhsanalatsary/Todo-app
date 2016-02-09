@@ -12,9 +12,8 @@
 	<!-- endcss -->
 </head>
 <body ng-controller="TodoCtrl as vm">
-	<h1>Hello Express</h1>
-
-	<div ng-hide="vm.checkSomething()">
+	<h1>Todos</h1>
+	<div ng-hide="vm.checkSomething()" ng-cloak>
 		<h2>Register</h2>
 		<form ng-submit="vm.register(vm.model.email, vm.model.password)">
 			<label>Email: <input type="text" ng-model=vm.model.email> </label>
@@ -25,7 +24,7 @@
 
 	<hr>
 
-	<div ng-hide="vm.user">
+	<div ng-hide="vm.user" ng-cloak>
 		<h2>Login</h2>
 		<form ng-submit="vm.login(vm.email, vm.password)">
 			<label>Email: <input type="text" ng-model=vm.email> </label>
@@ -34,17 +33,31 @@
 		</form>
 	</div>
 
-	<div ng-show="vm.user">
-		<h2>Welcome {{vm.user.email}}</h2>
-		<form ng-submit="vm.addTodo(vm.description)">
-			<input type="text" placeholder="What's up?" ng-model="vm.description" ng-disabled="vm.saving" autofocus>
-			<!-- <button type="submit">Save</button> -->
-			<pre ng-bind="vm.description"></pre>
-		</form>
+	<section ng-show="vm.user" ng-cloak>
+		<header>
+			<h2>Welcome {{vm.user.email}}</h2>
+				<form ng-submit="vm.addTodo(vm.description)">
+					<input type="text" placeholder="What's up?" ng-model="vm.description" ng-disabled="vm.saving" autofocus>
+						<!-- <button type="submit">Save</button> -->
+							<pre ng-bind="vm.description"></pre>
+				</form>
+		</header>
+		<section>
+			<ul>
+				<li ng-repeat="todo in vm.todos">
+					<div>
+						<label>{{todo.description}}</label>
+						<button type="button" class="btn btn-danger btn-xs" ng-click="vm.removeTodo(todo.id)">
+							<span class="glyphicon glyphicon-remove"></span>
+						</button>
+					</div>
+				</li>
+			</ul>
+		</section>
 		<button ng-click="vm.logout()">Logout</button>
-		<button ng-click="vm.getTodos()">Get All Todos</button>
-		<pre ng-bind="vm.todos | json"></pre>
-	</div>
+<!-- 		<button ng-click="vm.getTodos()">Get All Todos</button>
+				<pre ng-bind="vm.todos | json"></pre> -->
+	</section>
 	
 	<!-- bower:js -->
 	<script src="bower_components/angular/angular.js"></script>

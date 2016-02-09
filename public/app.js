@@ -11,17 +11,19 @@
 	app.controller('TodoCtrl', function TodoCtrl(TodosFactory, UserFactory) {
 
 		var vm = this;
-		vm.getTodos = getTodos;
+		// vm.getTodos = getTodos;
 		vm.login = login;
 		vm.logout = logout;
 		vm.register = register;
 		vm.checkSomething = checkSomething;
 		vm.addTodo = addTodo;
 		vm.Tada = tada;
+		vm.removeTodo = removeTodo;
 
 		// invocation / Initializations for authorized user. for fix refresh
 		UserFactory.getUser(vm.user).then(function success(res) {
 			vm.user = res.data;
+			getTodos();
 		});
 
 		function getTodos() {
@@ -71,6 +73,7 @@
 			TodosFactory.insert(description)
 				.then(function success(res) {
 					vm.description = '';
+					getTodos();
 				}, function() {
 					alert('Error ' + res.status + ' status ' + res.data.errors[0].message );
 				})
@@ -79,8 +82,16 @@
 				});
 		}
 
+		function removeTodo(todoId) {
+			console.log(todoId);
+			TodosFactory.delTodos(todoId).then(function success(res) {
+				console.log(res.status);
+				getTodos();
+			});
+		}
+
 		function tada(cb) {
-			alert(cb);
+			console.log(cb);
 		}
 
 		function handleError(res) {
@@ -93,7 +104,8 @@
 
 		return {
 			getTodos: getTodos,
-			insert: insert
+			insert: insert,
+			delTodos: delTodos
 		};
 
 		function getTodos() {
@@ -104,6 +116,11 @@
 			return $http.post(API_URL + '/todos', {
 				description: description
 			});
+		}
+
+		function delTodos(todoId) {
+			console.log(todoId + ' service');
+			return $http.delete(API_URL + '/todos/' + todoId);
 		}
 
 	});
