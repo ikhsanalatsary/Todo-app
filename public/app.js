@@ -19,6 +19,8 @@
 		vm.addTodo = addTodo;
 		vm.Tada = tada;
 		vm.removeTodo = removeTodo;
+		vm.toggleCompleted = toggleCompleted;
+		vm.editTodo = editTodo;
 
 		// invocation / Initializations for authorized user. for fix refresh
 		UserFactory.getUser(vm.user).then(function success(res) {
@@ -83,11 +85,18 @@
 		}
 
 		function removeTodo(todoId) {
-			console.log(todoId);
 			TodosFactory.delTodos(todoId).then(function success(res) {
 				console.log(res.status);
 				getTodos();
 			});
+		}
+
+		function toggleCompleted(todo) {
+			TodosFactory.editCompleted(todo).then(function success() {}, handleError);
+		}
+
+		function editTodo(todo) {
+			console.log(todo);
 		}
 
 		function tada(cb) {
@@ -105,7 +114,8 @@
 		return {
 			getTodos: getTodos,
 			insert: insert,
-			delTodos: delTodos
+			delTodos: delTodos,
+			editCompleted: editCompleted
 		};
 
 		function getTodos() {
@@ -119,8 +129,13 @@
 		}
 
 		function delTodos(todoId) {
-			console.log(todoId + ' service');
 			return $http.delete(API_URL + '/todos/' + todoId);
+		}
+
+		function editCompleted(todo) {
+			return $http.put(API_URL + '/todos/' + todo.id, {
+				completed: todo.completed
+			});
 		}
 
 	});

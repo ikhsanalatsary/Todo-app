@@ -37,16 +37,17 @@
 		<header>
 			<h2>Welcome {{vm.user.email}}</h2>
 				<form ng-submit="vm.addTodo(vm.description)">
-					<input type="text" placeholder="What's up?" ng-model="vm.description" ng-disabled="vm.saving" autofocus>
+					<input type="text" class="form-control" placeholder="What's up?" ng-model="vm.description" ng-disabled="vm.saving" autofocus>
 						<!-- <button type="submit">Save</button> -->
 							<pre ng-bind="vm.description"></pre>
 				</form>
 		</header>
 		<section>
 			<ul>
-				<li ng-repeat="todo in vm.todos">
+				<li class="list-unstyled" ng-repeat="todo in vm.todos">
 					<div>
-						<label>{{todo.description}}</label>
+						<input class="toggle" type="checkbox" ng-model="todo.completed" ng-change="vm.toggleCompleted(todo)">
+						<label ng-dblclick="editTodo(todo)">{{todo.description}}</label>
 						<button type="button" class="btn btn-danger btn-xs" ng-click="vm.removeTodo(todo.id)">
 							<span class="glyphicon glyphicon-remove"></span>
 						</button>
