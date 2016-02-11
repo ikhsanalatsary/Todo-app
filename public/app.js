@@ -8,8 +8,9 @@
 
 	app.constant('API_URL', 'http://localhost:3000');
 
-	app.controller('TodoCtrl', function TodoCtrl(TodosFactory, UserFactory, $log) {
+	app.controller('TodoCtrl', function TodoCtrl(TodosFactory, UserFactory) {
 
+		// Exports to view
 		var vm = this;
 		// vm.getTodos = getTodos;
 		vm.login = login;
@@ -17,7 +18,6 @@
 		vm.register = register;
 		vm.checkSomething = checkSomething;
 		vm.addTodo = addTodo;
-		vm.Tada = tada;
 		vm.removeTodo = removeTodo;
 		vm.toggleCompleted = toggleCompleted;
 		vm.editTodo = editTodo;
@@ -28,8 +28,6 @@
 		// invocation / Initializations for authorized user. for fix refresh
 		UserFactory.getUser(vm.user).then(function success(res) {
 			vm.user = res.data;
-		})
-		.finally(function() {
 			getTodos();
 		});
 
@@ -43,10 +41,8 @@
 			UserFactory.login(email, password)
 				.then(function success(res) {
 					vm.user = res.data.user;
-				}, handleError)
-				.finally(function() {
 					getTodos();
-				});
+				}, handleError);
 		}
 
 		function logout() {
@@ -103,18 +99,15 @@
 
 		function toggleCompleted(todo, completed) {
 			if (angular.isDefined(completed)) {
-				console.log(completed + ' toggleCompleted function');
 				todo.completed = completed;
 			}
 			TodosFactory.editCompleted(todo).then(function success() {}, handleError);
 		}
 
 		function editTodo(todo) {
-			// $log.log(todo);
 			vm.editedTodo = todo;
 			// Clone the original todo to restore it on demand, such as click mouse in any spot of page & click escape button
 			vm.originalTodo = angular.extend({}, todo);
-			$log.log(vm.originalTodo);
 		}
 
 		function saveEdits(todo, event) {
@@ -143,8 +136,6 @@
 		}
 
 		function markAll(completed) {
-			console.log(completed + ' markAll function');
-			console.log(vm.todos);
 			vm.todos.forEach(function (todo) {
 				if (todo.completed !== completed) {
 					toggleCompleted(todo, completed);
@@ -153,16 +144,10 @@
 		}
 
 		function revertEdits(todo) {
-			console.log(vm.todos.indexOf(todo));
-			console.log(vm.originalTodo);
 			// set to original todo for restore it after clicked escape button
 			vm.todos[vm.todos.indexOf(todo)] = vm.originalTodo;
 			vm.editedTodo = null;
 			vm.originalTodo = null;
-		}
-
-		function tada(cb) {
-			console.log(cb);
 		}
 
 		function handleError(res) {
@@ -288,11 +273,9 @@
 
 	app.directive('todoFocus', function todoFocus($timeout) {
 		return function (scope, elem, attrs) {
-			// console.log(scope);
 			scope.$watch(attrs.todoFocus, function(newVal) {
 				if(newVal) {
 					$timeout(function() {
-						console.log(elem[0]);
 						elem[0].focus();
 					}, 0, false);
 				}

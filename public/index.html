@@ -38,8 +38,7 @@
 			<h2>Welcome {{vm.user.email}}</h2>
 				<form ng-submit="vm.addTodo(vm.description)">
 					<input type="text" class="form-control" placeholder="What's up?" ng-model="vm.description" ng-disabled="vm.saving" autofocus>
-						<!-- <button type="submit">Save</button> -->
-							<pre ng-bind="vm.description"></pre>
+					<pre ng-bind="vm.description"></pre>
 				</form>
 		</header>
 		<section>
@@ -61,8 +60,6 @@
 			</ul>
 		</section>
 		<button class="btn btn-default" ng-click="vm.logout()">Logout</button>
-<!-- 		<button ng-click="vm.getTodos()">Get All Todos</button>
-				<pre ng-bind="vm.todos | json"></pre> -->
 	</section>
 	
 	<!-- bower:js -->
