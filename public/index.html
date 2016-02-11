@@ -43,6 +43,8 @@
 				</form>
 		</header>
 		<section>
+			<input id="toggle-all" type="checkbox" ng-model="vm.allChecked" ng-click="vm.markAll(vm.allChecked)">
+			<label for="toggle-all">Mark all as complete</label>
 			<ul id="todo-list">
 				<li class="list-unstyled" ng-repeat="todo in vm.todos" ng-class="{completed: todo.completed, editing: todo == vm.editedTodo}">
 					<div class="view">
@@ -53,7 +55,7 @@
 						</button>
 					</div>
 					<form ng-submit="vm.saveEdits(todo, 'submit')">
-						<input class="edit" ng-trim="false" ng-model="todo.description" ng-blur="vm.saveEdits(todo, 'blur')" todo-focus="todo == vm.editedTodo">
+						<input class="edit" ng-trim="false" ng-model="todo.description" todo-escape="vm.revertEdits(todo)" ng-blur="vm.saveEdits(todo, 'blur')" todo-focus="todo == vm.editedTodo">
 					</form>
 				</li>
 			</ul>

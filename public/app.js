@@ -22,6 +22,8 @@
 		vm.toggleCompleted = toggleCompleted;
 		vm.editTodo = editTodo;
 		vm.saveEdits = saveEdits;
+		vm.markAll = markAll;
+		vm.revertEdits = revertEdits;
 
 		// invocation / Initializations for authorized user. for fix refresh
 		UserFactory.getUser(vm.user).then(function success(res) {
@@ -99,14 +101,18 @@
 			});
 		}
 
-		function toggleCompleted(todo) {
+		function toggleCompleted(todo, completed) {
+			if (angular.isDefined(completed)) {
+				console.log(completed + ' toggleCompleted function');
+				todo.completed = completed;
+			}
 			TodosFactory.editCompleted(todo).then(function success() {}, handleError);
 		}
 
 		function editTodo(todo) {
 			// $log.log(todo);
 			vm.editedTodo = todo;
-			// Clone
+			// Clone the original todo to restore it on demand, such as click mouse in any spot of page & click escape button
 			vm.originalTodo = angular.extend({}, todo);
 			$log.log(vm.originalTodo);
 		}
@@ -136,6 +142,24 @@
 				});
 		}
 
+		function markAll(completed) {
+			console.log(completed + ' markAll function');
+			console.log(vm.todos);
+			vm.todos.forEach(function (todo) {
+				if (todo.completed !== completed) {
+					toggleCompleted(todo, completed);
+				}
+			});
+		}
+
+		function revertEdits(todo) {
+			console.log(vm.todos.indexOf(todo));
+			console.log(vm.originalTodo);
+			// set to original todo for restore it after clicked escape button
+			vm.todos[vm.todos.indexOf(todo)] = vm.originalTodo;
+			vm.editedTodo = null;
+			vm.originalTodo = null;
+		}
 
 		function tada(cb) {
 			console.log(cb);
@@ -272,6 +296,22 @@
 						elem[0].focus();
 					}, 0, false);
 				}
+			});
+		};
+	});
+
+	app.directive('todoEscape', function todoEscape() {
+		var ESCAPE_KEY = 27;
+
+		return function(scope, elem, attrs) {
+			elem.bind('keydown', function(event) {
+				if (event.keyCode === ESCAPE_KEY) {
+					scope.$apply(attrs.todoEscape);
+				}
+			});
+
+			scope.$on('$destroy', function() {
+				elem.unbind('keydown');
 			});
 		};
 	});
