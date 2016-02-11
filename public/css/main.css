@@ -1,0 +1,28 @@
+#todo-list li .edit {
+	display: none;
+}
+
+/*#todo-list li.editing {
+	border-bottom: none;
+	padding: 0
+}*/
+
+#todo-list li.editing .edit {
+	display: block;
+	width: 150px;
+	/*padding: 10px 14px 9px 15px;*/
+	margin: 0 0 0 20px;
+}
+
+#todo-list li.editing .view {
+	display: none;
+}
+
+#todo-list li.editing:last-child {
+	margin-bottom: -1px;
+}
+
+#todo-list li.completed label {
+	color: #d9d9d9;
+	text-decoration: line-through;
+}

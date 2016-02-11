@@ -43,9 +43,9 @@
 				</form>
 		</header>
 		<section>
-			<ul>
-				<li class="list-unstyled" ng-repeat="todo in vm.todos">
-					<div>
+			<ul id="todo-list">
+				<li class="list-unstyled" ng-repeat="todo in vm.todos" ng-class="{completed: todo.completed, editing: todo == vm.editedTodo}">
+					<div class="view">
 						<input class="toggle" type="checkbox" ng-model="todo.completed" ng-change="vm.toggleCompleted(todo)">
 						<label ng-dblclick="vm.editTodo(todo)">{{todo.description}}</label>
 						<button type="button" class="btn btn-danger btn-xs" ng-click="vm.removeTodo(todo)">
@@ -53,7 +53,7 @@
 						</button>
 					</div>
 					<form ng-submit="vm.saveEdits(todo, 'submit')">
-						<input class="edit" ng-trim="false" ng-model="todo.description" ng-blur="vm.saveEdits(todo, 'blur')">
+						<input class="edit" ng-trim="false" ng-model="todo.description" ng-blur="vm.saveEdits(todo, 'blur')" todo-focus="todo == vm.editedTodo">
 					</form>
 				</li>
 			</ul>

@@ -8,7 +8,7 @@
 
 	app.constant('API_URL', 'http://localhost:3000');
 
-	app.controller('TodoCtrl', function TodoCtrl(TodosFactory, UserFactory) {
+	app.controller('TodoCtrl', function TodoCtrl(TodosFactory, UserFactory, $log) {
 
 		var vm = this;
 		// vm.getTodos = getTodos;
@@ -104,10 +104,11 @@
 		}
 
 		function editTodo(todo) {
-			console.log(todo);
+			// $log.log(todo);
 			vm.editedTodo = todo;
 			// Clone
 			vm.originalTodo = angular.extend({}, todo);
+			$log.log(vm.originalTodo);
 		}
 
 		function saveEdits(todo, event) {
@@ -259,6 +260,20 @@
 
 			return config;
 		}
+	});
+
+	app.directive('todoFocus', function todoFocus($timeout) {
+		return function (scope, elem, attrs) {
+			// console.log(scope);
+			scope.$watch(attrs.todoFocus, function(newVal) {
+				if(newVal) {
+					$timeout(function() {
+						console.log(elem[0]);
+						elem[0].focus();
+					}, 0, false);
+				}
+			});
+		};
 	});
 
 })();
