@@ -21,10 +21,13 @@
 		vm.removeTodo = removeTodo;
 		vm.toggleCompleted = toggleCompleted;
 		vm.editTodo = editTodo;
+		vm.saveEdits = saveEdits;
 
 		// invocation / Initializations for authorized user. for fix refresh
 		UserFactory.getUser(vm.user).then(function success(res) {
 			vm.user = res.data;
+		})
+		.finally(function() {
 			getTodos();
 		});
 
@@ -38,14 +41,17 @@
 			UserFactory.login(email, password)
 				.then(function success(res) {
 					vm.user = res.data.user;
-				}, handleError);
+				}, handleError)
+				.finally(function() {
+					getTodos();
+				});
 		}
 
 		function logout() {
 			UserFactory.logout();
-			vm.email = '';
-			vm.password = '';
-			vm.user = '';
+			vm.email = null;
+			vm.password = null;
+			vm.user = null;
 			vm.registered = null;
 		}
 
@@ -74,19 +80,21 @@
 
 			TodosFactory.insert(description)
 				.then(function success(res) {
-					vm.description = '';
-					getTodos();
+					vm.description = null;
 				}, function() {
 					alert('Error ' + res.status + ' status ' + res.data.errors[0].message );
 				})
 				.finally(function() {
 					vm.saving = false; //set false, for fix hanging in browser
+					getTodos();
 				});
 		}
 
-		function removeTodo(todoId) {
-			TodosFactory.delTodos(todoId).then(function success(res) {
+		function removeTodo(todo) {
+			TodosFactory.delTodos(todo).then(function success(res) {
 				console.log(res.status);
+			})
+			.finally(function() {
 				getTodos();
 			});
 		}
@@ -97,7 +105,36 @@
 
 		function editTodo(todo) {
 			console.log(todo);
+			vm.editedTodo = todo;
+			// Clone
+			vm.originalTodo = angular.extend({}, todo);
 		}
+
+		function saveEdits(todo, event) {
+			if (event === 'blur' && vm.saveEvent === 'submit') {
+				vm.saveEvent = null;
+				return;
+			}
+
+			vm.saveEvent = event;
+
+			todo.description = todo.description.trim();
+
+			if (todo.description === vm.originalTodo.description) {
+				vm.editedTodo = null;
+				return;
+			}
+
+			TodosFactory[todo.description ? 'editCompleted' : 'delTodos'](todo)
+				.then(function success() {}, function(err) {
+					todo.description = vm.originalTodo.description;
+				})
+				.finally(function() {
+					vm.editedTodo = null;
+					getTodos();
+				});
+		}
+
 
 		function tada(cb) {
 			console.log(cb);
@@ -128,12 +165,13 @@
 			});
 		}
 
-		function delTodos(todoId) {
-			return $http.delete(API_URL + '/todos/' + todoId);
+		function delTodos(todo) {
+			return $http.delete(API_URL + '/todos/' + todo.id);
 		}
 
 		function editCompleted(todo) {
 			return $http.put(API_URL + '/todos/' + todo.id, {
+				description: todo.description,
 				completed: todo.completed
 			});
 		}
