@@ -52,9 +52,6 @@ module.exports = function (sequelize, DataTypes) {
 					if (!_.isString(body.email) || !_.isString(body.password)) {
 						return reject();
 					};
-
-					console.log(self);
-
 					self.findOne({
 						where: {
 							email: body.email

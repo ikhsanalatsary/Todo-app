@@ -27,6 +27,6 @@
 	text-decoration: line-through;
 }
 
-.form-control {
+#todo-desc input.form-control {
 	width: 40% !important;
 }

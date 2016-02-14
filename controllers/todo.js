@@ -10,6 +10,8 @@ module.exports = function(app, middleware, db) {
 		var query = req.query;
 		var where = {};
 
+		where.userId = req.user.get('id');
+
 		if (query.hasOwnProperty('completed') && query.completed === 'true') {
 			where.completed = true;
 		} else if (query.hasOwnProperty('completed') && query.completed === 'false') {
@@ -38,21 +40,22 @@ module.exports = function(app, middleware, db) {
 	app.get('/todos/:id', middleware.requireAuthentication, function(req, res) {
 		var todoId = parseInt(req.params.id, 10);
 
-		db.todo.findById(todoId)
-			.then(function (todo) {
-				if (todo) {
-					res.json(todo);
-				} else {
-					res.status(404).send();
-				}
-			},
-				function (e) {
-					res.status(500).send(e);
-				})
-					.catch(function (e) {
-						res.send(e);
-					});
-
+		db.todo.findOne({
+			where: {
+				userId: req.user.get('id'),
+				id: todoId
+			}
+		})
+		.then(function (todo) {
+			if (todo) {
+				res.json(todo.toJSON());
+			} else {
+				res.status(404).send();
+			}
+		},
+		function (e) {
+			res.status(500).send();
+		});
 	});
 
 	// POST /todos
@@ -62,7 +65,13 @@ module.exports = function(app, middleware, db) {
 
 		db.todo.create(body)
 			.then(function (todo) {
-				res.json(todo);
+				req.user.addTodo(todo)
+					.then(function () {
+						return todo.reload();
+					})
+					.then(function (todo) {
+						res.json(todo.toJSON());
+					});
 			}, 
 			function (e) {
 				res.status(400).send();
@@ -75,7 +84,8 @@ module.exports = function(app, middleware, db) {
 
 		db.todo.destroy({
 			where: {
-				id: todoId
+				id: todoId,
+				userId: req.user.get('id')
 			}
 		})
 		.then(function (rowsDeleted) {
@@ -114,22 +124,25 @@ module.exports = function(app, middleware, db) {
 			attributes.description = attributes.description.trim();
 		};
 
-		db.todo.findById(todoId)
-			.then(function (todo) {
-				if (todo) {
-					todo.update(attributes)
-						.then(function (todo) {
-							res.json(todo);
-						},
-						function (e) {
-							res.status(400).json(e);
-						});
-				} else{
-					res.status(404).send();
-				};
-			},
-			function (e) {
-				res.status(500).send();
-			});
+		db.todo.findOne({
+			id: todoId,
+			userId: req.user.get('id')
+		})
+		.then(function (todo) {
+			if (todo) {
+				todo.update(attributes)
+					.then(function (todo) {
+						res.json(todo.toJSON());
+					},
+					function (e) {
+						res.status(400).json(e);
+					});
+			} else{
+				res.status(404).send();
+			};
+		},
+		function (e) {
+			res.status(500).send();
+		});
 	});
 };
