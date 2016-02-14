@@ -22,7 +22,7 @@ app.get('/me', middleware.requireAuthentication, function (req, res) {
 
 app.use(express.static(__dirname + '/public'));
 
-db.sequelize.sync({force:true}).then(function () {
+db.sequelize.sync().then(function () {
 	app.listen(PORT, function (error) {
 		if (error) {
 			throw error

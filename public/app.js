@@ -6,7 +6,7 @@
 		$httpProvider.interceptors.push('AuthInterceptor');
 	});
 
-	app.controller('TodoCtrl', function TodoCtrl(TodosFactory, UserFactory) {
+	app.controller('TodoCtrl', function TodoCtrl(TodosFactory, UserFactory, $filter) {
 
 		// Exports to view
 		var vm = this;
@@ -22,6 +22,11 @@
 		vm.saveEdits = saveEdits;
 		vm.markAll = markAll;
 		vm.revertEdits = revertEdits;
+		vm.currentPage = 0;
+		vm.pageSize = 10;
+		vm.numberOfPages = numberOfPages;
+		vm.getData = getData;
+		// vm.q = '';
 
 		// invocation / Initializations for authorized user. for fix refresh
 		UserFactory.getUser(vm.user).then(function success(res) {
@@ -33,6 +38,18 @@
 			TodosFactory.getTodos().then(function success(res) {
 				vm.todos = res.data;
 			}, handleError);
+		}
+
+		function numberOfPages() {
+			if (vm.todos) {
+				return Math.ceil(vm.todos.length/vm.pageSize);
+			}
+		}
+
+		function getData () {
+			if (vm.todos) {
+				return $filter('filter')(vm.todos);
+			}
 		}
 
 		function login(email, password) {
@@ -72,7 +89,7 @@
 		}
 
 		function addTodo(description) {
-			if (!description) {
+			if (!description.length) {
 				return;
 			}
 
@@ -299,6 +316,15 @@
 				elem.unbind('keydown');
 			});
 		};
+	});
+
+	app.filter('startFrom', function() {
+		return function(input, start) {
+			start = +start; //parse to int
+			if(input) {
+				return input.slice(start);
+			}
+		}
 	});
 
 })();
