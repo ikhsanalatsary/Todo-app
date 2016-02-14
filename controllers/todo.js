@@ -41,7 +41,7 @@ module.exports = function(app, middleware, db) {
 		var todoId = parseInt(req.params.id, 10);
 
 		db.todo.findOne({
-			where: {
+			where: { // Shit my foolish, haha. i forgot type "where"
 				userId: req.user.get('id'),
 				id: todoId
 			}
@@ -125,8 +125,10 @@ module.exports = function(app, middleware, db) {
 		};
 
 		db.todo.findOne({
-			id: todoId,
-			userId: req.user.get('id')
+			where: {
+				id: todoId,
+				userId: req.user.get('id')
+			}
 		})
 		.then(function (todo) {
 			if (todo) {
