@@ -6,8 +6,6 @@
 		$httpProvider.interceptors.push('AuthInterceptor');
 	});
 
-	app.constant('API_URL', 'http://localhost:3000');
-
 	app.controller('TodoCtrl', function TodoCtrl(TodosFactory, UserFactory) {
 
 		// Exports to view
@@ -60,6 +58,10 @@
 					alert('Registered, you can login');
 				}, function (res) {
 					alert('Error ' + res.status + ' status ' + res.data.errors[0].message );
+				})
+				.finally(function () {
+					email = null;
+					password = null;
 				});
 		}
 
@@ -156,7 +158,7 @@
 
 	});
 
-	app.factory('TodosFactory', function TodosFactory($http, API_URL) {
+	app.factory('TodosFactory', function TodosFactory($http) {
 
 		return {
 			getTodos: getTodos,
@@ -166,21 +168,21 @@
 		};
 
 		function getTodos() {
-			return $http.get(API_URL + '/todos');
+			return $http.get('/todos');
 		}
 
 		function insert(description) {
-			return $http.post(API_URL + '/todos', {
+			return $http.post('/todos', {
 				description: description
 			});
 		}
 
 		function delTodos(todo) {
-			return $http.delete(API_URL + '/todos/' + todo.id);
+			return $http.delete('/todos/' + todo.id);
 		}
 
 		function editCompleted(todo) {
-			return $http.put(API_URL + '/todos/' + todo.id, {
+			return $http.put('/todos/' + todo.id, {
 				description: todo.description,
 				completed: todo.completed
 			});
@@ -188,7 +190,7 @@
 
 	});
 
-	app.factory('UserFactory', function UserFactory($http, API_URL, AuthTokenFactory, $q) {
+	app.factory('UserFactory', function UserFactory($http, AuthTokenFactory, $q) {
 
 		return {
 			login: login,
@@ -198,7 +200,7 @@
 		};
 
 		function login(email, password) {
-			return $http.post(API_URL + '/users/login', {
+			return $http.post('/users/login', {
 				email: email,
 				password: password
 			}).then(function success(res) {
@@ -213,7 +215,7 @@
 
 		function getUser(vmUser) {
 			if (!vmUser || AuthTokenFactory.getToken()) {
-				return $http.get(API_URL + '/me');
+				return $http.get('/me');
 			}
 			else {
 				$q.reject({data: 'No Authorized Token'});
@@ -222,7 +224,7 @@
 
 		function register(email, password) {
 			if (typeof email === 'string' && typeof password === 'string') {
-				return $http.post(API_URL + '/users', {
+				return $http.post('/users', {
 					email: email,
 					password: password
 				});
