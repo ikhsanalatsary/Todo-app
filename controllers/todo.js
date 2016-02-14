@@ -65,7 +65,7 @@ module.exports = function(app, middleware, db) {
 
 		db.todo.create(body)
 			.then(function (todo) {
-				req.user.addTodo(todo)
+				return req.user.addTodo(todo)
 					.then(function () {
 						return todo.reload();
 					})
