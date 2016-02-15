@@ -72,9 +72,9 @@
 			UserFactory.register(email, password)
 				.then(function success(res) {
 					vm.registered = res.data;
-					alert('Registered, you can login');
+					swal('Registered', 'You can login!!', 'success');
 				}, function (res) {
-					alert('Error ' + res.status + ' status ' + res.data.errors[0].message );
+					swal('Error ', res.status + ' status ' + res.data.errors[0].message, 'error');
 				})
 				.finally(function () {
 					email = null;
@@ -99,7 +99,7 @@
 				.then(function success(res) {
 					vm.description = null;
 				}, function() {
-					alert('Error ' + res.status + ' status ' + res.data.errors[0].message );
+					swal('Error ', res.status + ' status ' + res.data.errors[0].message, 'error');
 				})
 				.finally(function() {
 					vm.saving = false; //set false, for fix hanging in browser
@@ -170,7 +170,7 @@
 		}
 
 		function handleError(res) {
-			alert('Error ' + res.status + ' status ' + res.statusText);
+			swal('Error ', res.status + ' status ' + res.statusText, 'error');
 		}
 
 	});
