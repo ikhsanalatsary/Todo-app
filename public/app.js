@@ -1,13 +1,16 @@
 ;(function() {
 	'use strict';
-	var app = angular.module('todoApp', []);
+	var app = angular.module('todoApp', ['btford.socket-io']);
 
 	app.config(function config($httpProvider) {
 		$httpProvider.interceptors.push('AuthInterceptor');
 	});
 
-	app.controller('TodoCtrl', function TodoCtrl(TodosFactory, UserFactory, $filter) {
+	app.controller('TodoCtrl', function TodoCtrl(TodosFactory, UserFactory, $filter, socket) {
 
+		socket.on('connect', function() {
+			console.log('Connected to socket.io server');
+		});
 		// Exports to view
 		var vm = this;
 		// vm.getTodos = getTodos;
@@ -290,6 +293,10 @@
 		}
 	});
 
+	app.factory('socket', function socketFactory(socketFactory) {
+    	return socketFactory();
+  	});
+  	
 	app.directive('todoFocus', function todoFocus($timeout) {
 		return function (scope, elem, attrs) {
 			scope.$watch(attrs.todoFocus, function(newVal) {
