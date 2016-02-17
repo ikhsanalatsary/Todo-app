@@ -12,11 +12,13 @@
 	<!-- endcss -->
 </head>
 <body ng-controller="TodoCtrl as vm">
-	<span ng-hide="vm.user" ng-cloak>
+	<div class="container">
+		<div class="row">
+			<div class=".col-xs-12 .col-sm-6 .col-lg-8">
+				<span ng-hide="vm.user" ng-cloak>
 		<h1>Todos</h1>
 		<hr>
 	</span>
-	<div class=".col-xs-12 .col-sm-6 .col-lg-8">
 		<div ng-hide="vm.checkSomething()" ng-cloak>
 		<h2>Register</h2>
 		<form class="form-inline" ng-submit="vm.register(vm.model.email, vm.model.password)">
@@ -51,7 +53,7 @@
 				<li ng-repeat="todo in vm.todos | startFrom:vm.currentPage*vm.pageSize | limitTo:vm.pageSize" ng-class="{completed: todo.completed, editing: todo == vm.editedTodo}" ng-cloak>
 					<div class="view">
 						<input class="toggle" type="checkbox" ng-model="todo.completed" ng-change="vm.toggleCompleted(todo)">
-							<label ng-if="vm.mobile" hm-double-tap="vm.editTodo(todo)">{{todo.description}}</label>
+							<label ng-if="vm.mobile" hm-doubletap="vm.editTodo(todo)">{{todo.description}}</label>
 						<label ng-if="vm.desktop"ng-dblclick="vm.editTodo(todo)">{{todo.description}}</label>
 						<button type="button" class="destroy" ng-click="vm.removeTodo(todo)"></button>
 					</div>
@@ -79,7 +81,10 @@
 			<a href="https://github.com/ikhsanalatsary/Todo-app" target= "_blank">View on Github.com</a>
 		</div>
 	</footer>
+			</div>
+		</div>
 	</div>
+	
 	
 	<!-- bower:js -->
 	
