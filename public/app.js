@@ -1,6 +1,6 @@
 ;(function() {
 	'use strict';
-	var app = angular.module('todoApp', ['btford.socket-io', 'matchMedia', 'angular-gestures']);
+	var app = angular.module('todoApp', ['btford.socket-io', 'matchMedia']);
 
 	app.config(function config($httpProvider) {
 		$httpProvider.interceptors.push('AuthInterceptor');
@@ -336,7 +336,7 @@
 	app.directive('iosDblclick',
 		function () {
 
-			const DblClickInterval = 300; //milliseconds
+			var DblClickInterval = 300; //milliseconds
 
 			var firstClickTime;
 			var waitingSecondClick = false;

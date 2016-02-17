@@ -53,8 +53,8 @@
 				<li ng-repeat="todo in vm.todos | startFrom:vm.currentPage*vm.pageSize | limitTo:vm.pageSize" ng-class="{completed: todo.completed, editing: todo == vm.editedTodo}" ng-cloak>
 					<div class="view">
 						<input class="toggle" type="checkbox" ng-model="todo.completed" ng-change="vm.toggleCompleted(todo)">
-							<label ng-if="vm.mobile" hm-double-tap="vm.editTodo(todo)">{{todo.description}}</label>
-						<label ng-if="vm.desktop"ng-dblclick="vm.editTodo(todo)">{{todo.description}}</label>
+							<label ng-if="vm.mobile" ios-dblclick="vm.editTodo(todo)">{{todo.description}}</label>
+						<label ng-if="vm.desktop" ng-dblclick="vm.editTodo(todo)">{{todo.description}}</label>
 						<button type="button" class="destroy" ng-click="vm.removeTodo(todo)"></button>
 					</div>
 					<form ng-submit="vm.saveEdits(todo, 'submit')">
@@ -98,15 +98,9 @@
 
 	<script src="bower_components/angular-socket-io/socket.js"></script>
 	
-	<script src="bower_components/hammerjs/hammer.js"></script>
-	
 	<script src="bower_components/angular-media-queries/match-media.js"></script>
 	
 	<script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
-
-	<script src="bower_components/angular-gestures/gestures.js"></script>
-	
-	<!-- // <script src="bower_components/AngularHammer/angular.hammer.js"></script> -->
 	
 	<!-- endinject-->
 	<!-- inject:js -->
