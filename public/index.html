@@ -3,9 +3,9 @@
 <head>
 	<title>Todo App</title>
 	<!-- bower:css -->
-	<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
-	<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css">
-	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css">
+	<link rel="stylesheet" type="text/css" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="bower_components/bootstrap/dist/css/bootstrap-theme.min.css">
+	<link rel="stylesheet" type="text/css" href="bower_components/sweetalert/dist/sweetalert.css">
 	<!-- endcss -->
 	<!-- inject:css -->
 	<link rel="stylesheet" type="text/css" href="css/main.css">
@@ -51,7 +51,8 @@
 				<li ng-repeat="todo in vm.todos | startFrom:vm.currentPage*vm.pageSize | limitTo:vm.pageSize" ng-class="{completed: todo.completed, editing: todo == vm.editedTodo}" ng-cloak>
 					<div class="view">
 						<input class="toggle" type="checkbox" ng-model="todo.completed" ng-change="vm.toggleCompleted(todo)">
-						<label ios-dblclick="vm.editTodo(todo)">{{todo.description}}</label>
+							<label ng-if="vm.mobile" hm-double-tap="vm.editTodo(todo)">{{todo.description}}</label>
+						<label ng-if="vm.desktop"ng-dblclick="vm.editTodo(todo)">{{todo.description}}</label>
 						<button type="button" class="destroy" ng-click="vm.removeTodo(todo)"></button>
 					</div>
 					<form ng-submit="vm.saveEdits(todo, 'submit')">
@@ -81,12 +82,25 @@
 	</div>
 	
 	<!-- bower:js -->
-	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.9/angular.min.js"></script>
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+	
+	<script src="bower_components/angular/angular.js"></script>
+	
+	<script src="bower_components/jquery/dist/jquery.js"></script>
+	
+	<script src="bower_components/sweetalert/dist/sweetalert.min.js"></script>
+	
 	<script src="bower_components/socket.io-client/socket.io.js"></script>
+
 	<script src="bower_components/angular-socket-io/socket.js"></script>
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
+	
+	<script src="bower_components/hammerjs/hammer.js"></script>
+	
+	<script src="bower_components/angular-media-queries/match-media.js"></script>
+	
+	<script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
+	
+	<script src="bower_components/AngularHammer/angular.hammer.js"></script>
+	
 	<!-- endinject-->
 	<!-- inject:js -->
 	<script src="app.js"></script>

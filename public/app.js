@@ -1,12 +1,12 @@
 ;(function() {
 	'use strict';
-	var app = angular.module('todoApp', ['btford.socket-io']);
+	var app = angular.module('todoApp', ['btford.socket-io', 'matchMedia']);
 
 	app.config(function config($httpProvider) {
 		$httpProvider.interceptors.push('AuthInterceptor');
 	});
 
-	app.controller('TodoCtrl', function TodoCtrl(TodosFactory, UserFactory, $filter, socket) {
+	app.controller('TodoCtrl', function TodoCtrl(TodosFactory, UserFactory, $filter, socket, screenSize) {
 
 		socket.on('connect', function() {
 			console.log('Connected to socket.io server');
@@ -30,6 +30,14 @@
 		vm.numberOfPages = numberOfPages;
 		vm.getData = getData;
 		// vm.q = '';
+
+		vm.desktop = screenSize.on('md, lg', function(match){
+    		vm.desktop = match;
+		});
+
+		vm.mobile = screenSize.on('xs, sm', function(match){
+		    vm.mobile = match;
+		});
 
 		// invocation / Initializations for authorized user. for fix refresh
 		UserFactory.getUser(vm.user).then(function success(res) {
@@ -296,7 +304,7 @@
 	app.factory('socket', function socketFactory(socketFactory) {
     	return socketFactory();
   	});
-  	
+
 	app.directive('todoFocus', function todoFocus($timeout) {
 		return function (scope, elem, attrs) {
 			scope.$watch(attrs.todoFocus, function(newVal) {

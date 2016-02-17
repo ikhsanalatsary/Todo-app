@@ -46,7 +46,7 @@ gulp.task('watch', function () {
 });
 
 gulp.task('index', function() {
-	var target = './public/index.html'
+	var target = './public/index.html',
 		jsrc = ['./public/**/*.js', '!./public/bower_components/**/*'],
 		bowersrc = bowerFiles();
 
