@@ -1,12 +1,42 @@
 ;(function() {
 	'use strict';
-	var app = angular.module('todoApp', ['btford.socket-io', 'matchMedia']);
+	var app = angular.module('todoApp', ['btford.socket-io', 'matchMedia', 'ui.router']);
 
-	app.config(function config($httpProvider) {
+	app.config(function config($httpProvider, $stateProvider, $urlRouterProvider) {
 		$httpProvider.interceptors.push('AuthInterceptor');
+
+		$urlRouterProvider.otherwise("/login");
+
+		$stateProvider
+		    .state('login', {
+		      url: "/login",
+		      templateUrl: "partials/login.html",
+		      authenticate: false
+		    })
+		    .state('register', {
+		      url: "/register",
+		      templateUrl: "partials/register.html",
+		      authenticate: false
+		    })
+		    .state('list', {
+		      url: "/list",
+		      templateUrl: "partials/list.html",
+		      authenticate: true
+		    });
 	});
 
-	app.controller('TodoCtrl', function TodoCtrl(TodosFactory, UserFactory, $filter, socket, screenSize) {
+	app.run(function run($rootScope, $state, AuthTokenFactory) {
+
+	    $rootScope.$on("$stateChangeStart",
+	        function(event, toState, toParams, fromState, fromParams) {
+	            if (toState.authenticate && !AuthTokenFactory.getToken()) {
+	                $state.go("login");
+	                event.preventDefault();
+	            }
+	        });
+	});
+
+	app.controller('TodoCtrl', function TodoCtrl(TodosFactory, UserFactory, $filter, socket, screenSize, $state) {
 
 		socket.on('connect', function() {
 			console.log('Connected to socket.io server');
@@ -67,6 +97,7 @@
 			UserFactory.login(email, password)
 				.then(function success(res) {
 					vm.user = res.data.user;
+					$state.go('list');
 					getTodos();
 				}, handleError);
 		}
@@ -77,6 +108,7 @@
 			vm.password = null;
 			vm.user = null;
 			vm.registered = null;
+			$state.go('login');
 		}
 
 		function register (email, password) {
@@ -84,12 +116,17 @@
 				.then(function success(res) {
 					vm.registered = res.data;
 					swal('Registered', 'You can login!!', 'success');
+					$state.go('login');
 				}, function (res) {
+					if (res.status === 500) {
+						handleError(res);
+						return;
+					}
 					swal('Error ', res.status + ' status ' + res.data.errors[0].message, 'error');
 				})
 				.finally(function () {
-					email = null;
-					password = null;
+					vm.email = null;
+					vm.password = null;
 				});
 		}
 
@@ -251,12 +288,10 @@
 		}
 
 		function register(email, password) {
-			if (typeof email === 'string' && typeof password === 'string') {
-				return $http.post('/users', {
-					email: email,
-					password: password
-				});
-			}
+			return $http.post('/users', {
+				email: email,
+				password: password
+			});
 		}
 
 	});
@@ -284,7 +319,7 @@
 
 	});
 
-	app.factory('AuthInterceptor', function AuthInterceptor(AuthTokenFactory) {
+	app.factory('AuthInterceptor', function AuthInterceptor(AuthTokenFactory, $location, $q) {
 
 		return {
 			request: addToken
@@ -299,6 +334,7 @@
 
 			return config;
 		}
+
 	});
 
 	app.factory('socket', function socketFactory(socketFactory) {
@@ -373,7 +409,7 @@
 			if(input) {
 				return input.slice(start);
 			}
-		}
+		};
 	});
 
 })();
