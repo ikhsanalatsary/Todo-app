@@ -1,6 +1,6 @@
 ;(function() {
 	'use strict';
-	var app = angular.module('todoApp', ['btford.socket-io', 'matchMedia']);
+	var app = angular.module('todoApp', ['btford.socket-io', 'matchMedia', 'angular-gestures']);
 
 	app.config(function config($httpProvider) {
 		$httpProvider.interceptors.push('AuthInterceptor');
