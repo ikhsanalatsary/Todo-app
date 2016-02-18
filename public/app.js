@@ -44,6 +44,9 @@
 		// Exports to view
 		var vm = this;
 		// vm.getTodos = getTodos;
+		vm.description = '';
+		vm.editedTodo = null;
+
 		vm.login = login;
 		vm.logout = logout;
 		vm.register = register;
@@ -136,16 +139,20 @@
 			}
 		}
 
-		function addTodo(description) {
-			if (!description.length) {
+		function addTodo() {
+			var newTodo = {
+				description: vm.description.trim()
+			}
+
+			if (!newTodo.description) {
 				return;
 			}
 
 			vm.saving = true;
 
-			TodosFactory.insert(description)
+			TodosFactory.insert(newTodo)
 				.then(function success(res) {
-					vm.description = null;
+					vm.description = '';
 				}, function() {
 					swal('Error ', res.status + ' status ' + res.data.errors[0].message, 'error');
 				})
@@ -236,10 +243,8 @@
 			return $http.get('/todos');
 		}
 
-		function insert(description) {
-			return $http.post('/todos', {
-				description: description
-			});
+		function insert(newTodo) {
+			return $http.post('/todos', newTodo);
 		}
 
 		function delTodos(todo) {
