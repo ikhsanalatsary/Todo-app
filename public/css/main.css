@@ -3,13 +3,15 @@ body {
 	margin: 0;
 	padding: 0;
 }
-/*
+
 html,
 body {
-  background: #efefef;
+  /*background: #efefef;
   padding: 10px;
-  font-family: 'Varela Round';
-}*/
+  font-family: 'Varela Round';*/
+  max-width: 100%;
+  overflow-x: hidden;
+}
 
 button {
 	margin: 0;
