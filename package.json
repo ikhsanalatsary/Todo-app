@@ -4,7 +4,9 @@
   "description": "Todo Application use ExpressJs",
   "main": "index.js",
   "scripts": {
-    "postinstall": "./node_modules/bower/bin/bower install"
+    "postinstall": "./node_modules/bower/bin/bower install",
+    "prepublish": "npm run snyk-protect",
+    "snyk-protect": "snyk-protect"
   },
   "author": "Ikhsan Alatsary",
   "license": "ISC",
@@ -23,7 +25,8 @@
     "sequelize": "^3.19.2",
     "socket.io": "^1.4.5",
     "sqlite3": "^3.1.1",
-    "underscore": "^1.8.3"
+    "underscore": "^1.8.3",
+    "@snyk/protect": "latest"
   },
   "devDependencies": {
     "event-stream": "^3.3.2",
@@ -40,5 +43,6 @@
     "gulp-uglify": "^1.5.1",
     "jshint": "^2.9.1",
     "main-bower-files": "^2.11.1"
-  }
+  },
+  "snyk": true
 }
